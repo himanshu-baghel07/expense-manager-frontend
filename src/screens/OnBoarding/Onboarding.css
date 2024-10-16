@@ -1,0 +1,102 @@
+.onboarding {
+  height: 100vh;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+}
+.left_onboard {
+  height: 100vh;
+  width: 50%;
+  background-color: #ecdfcc;
+  color: #181c14;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.left_onboard h3 {
+  margin: 30px 0;
+}
+.right_onboard {
+  height: 100vh;
+  width: 50%;
+  background-color: #181c14;
+  color: #ecdfcc;
+}
+.action_btn {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+}
+.select_btn {
+  background-color: #181c14;
+  color: #fff;
+  padding: 5px 10px;
+  border: 2px solid #875407;
+  border-radius: 5px;
+}
+
+.unselect_btn {
+  background-color: #ecdfcc;
+  color: #181c14;
+  padding: 5px 10px;
+  border: 2px solid #181c14;
+  border-radius: 5px;
+}
+.unselect_btn:hover {
+  background-color: #181c14;
+  color: #fff;
+  padding: 5px 10px;
+  border: 2px solid #875407;
+  border-radius: 5px;
+}
+.form_cont {
+  width: 100%;
+}
+.input_box_style {
+  margin: 7px 25%;
+  padding: 5px;
+  height: 35px;
+  background-color: #697565;
+  width: 50%;
+  border: 1px solid #7f760b;
+  border-radius: 10px;
+  color: #f4f1ed;
+  display: flex;
+  justify-content: center;
+}
+.input_box_style:focus {
+  outline: none;
+}
+.input_box_style::placeholder {
+  color: #ddd0bd;
+}
+.submit_btn {
+  background-color: #3c3d37;
+  color: #f4f1ed;
+  width: 50%;
+  margin: 7px 25%;
+  border: none;
+  padding: 5px;
+  border-radius: 10px;
+}
+.password_cont {
+  position: relative;
+}
+.password_toggle_icon {
+  position: absolute;
+  left: 35%;
+  top: 60%;
+  cursor: pointer;
+  width: 20px;
+  height: 20px;
+  z-index: 10;
+}
+.msg_cont {
+  height: 35px;
+  width: 50%;
+  margin: 0 25%;
+}
