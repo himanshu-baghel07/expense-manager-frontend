@@ -3,13 +3,16 @@ import "./Onboarding.css";
 import bgImage from "../../assets/background_vector.svg";
 import eyeOpen from "../../assets/eye_open.svg";
 import eyeClose from "../../assets/eye_close.svg";
+import errorIcon from "../../assets/error_icon.svg";
 import axios from "axios";
 import URI from "../../common";
-import * as CryptoJS from "crypto-js";
-import { emailValidation } from "../../common/commonComponent";
+import {
+  emailValidation,
+  encryptedPayload,
+} from "../../common/commonComponent";
 import { useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
-import { setAccessToken, setRefreshToken } from "../../common/redux/UserSlice";
+
+import loaderBtn from "../../assets/button_loader.svg";
 
 const Onboarding = () => {
   const [selectedAction, setselectedAction] = useState(1);
@@ -20,13 +23,12 @@ const Onboarding = () => {
     password: "",
     confirmPassword: "",
   });
+  const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
 
   const navigateTo = useNavigate();
-
-  const dispatchTo = useDispatch();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -40,18 +42,10 @@ const Onboarding = () => {
     setShowConfirmPassword(!showConfirmPassword);
   };
 
-  const encryptedPayload = (requestBody) => {
-    let encryptedRequestBody;
-    const requestBodyString = JSON.stringify(requestBody);
-    encryptedRequestBody = CryptoJS.AES.encrypt(
-      requestBodyString,
-      "hello0"
-    ).toString();
-    return encryptedRequestBody;
-  };
-
   const handleSignup = async (e) => {
     e.preventDefault();
+    setLoading(true);
+
     let encryptedRequestBody;
     const __reqBody = {
       username: formData.username,
@@ -59,11 +53,14 @@ const Onboarding = () => {
       email: formData.email,
       password: formData.password,
     };
+
     encryptedRequestBody = encryptedPayload(__reqBody);
+
     try {
       const response = await axios.post(URI.register, {
         encryptedRequestBody: encryptedRequestBody,
       });
+
       if (response.status === 201) {
         setFormData({
           username: "",
@@ -77,34 +74,42 @@ const Onboarding = () => {
     } catch (error) {
       console.log("Error", error);
       setErrorMsg(error.response?.data?.message || "An error occurred");
+    } finally {
+      setLoading(false);
     }
   };
 
   const authenticate = async (userId) => {
+    setLoading(true);
     let encryptedRequestBody;
     const __reqBody = {
       userId,
     };
     encryptedRequestBody = encryptedPayload(__reqBody);
+
     try {
       const response = await axios.post(URI.authenticate, {
         encryptedRequestBody: encryptedRequestBody,
       });
       if (response.status === 200) {
         console.log(response.data);
-        dispatchTo(setAccessToken(response.data.accessToken));
-        dispatchTo(setRefreshToken(response.data.refreshToken));
+
+        sessionStorage.setItem("access_token", response.data.accessToken);
         navigateTo("/homescreen");
       }
       setErrorMsg("Success");
     } catch (error) {
       console.log("Error", error);
       setErrorMsg(error.response?.data?.message || "An error occurred");
+    } finally {
+      setLoading(false);
     }
   };
 
   const handleLogin = async (e) => {
     e.preventDefault();
+    setLoading(true); // Start loading state
+
     if (emailValidation(formData.email)) {
       let encryptedRequestBody;
       const __reqBody = {
@@ -112,6 +117,7 @@ const Onboarding = () => {
         password: formData.password,
       };
       encryptedRequestBody = encryptedPayload(__reqBody);
+
       try {
         const response = await axios.post(URI.login, {
           encryptedRequestBody: encryptedRequestBody,
@@ -120,16 +126,18 @@ const Onboarding = () => {
         if (response.status === 200) {
           console.log("Id:", response.data.data.user._id);
           const id = response.data.data.user._id;
-          authenticate(id);
-          // navigateTo("/homescreen");
+          authenticate(id); // Call authenticate function
         }
         setErrorMsg("Success");
       } catch (error) {
         console.log("Error", error);
         setErrorMsg(error.response?.data?.message || "An error occurred");
+      } finally {
+        setLoading(false); // Stop loading state after the operation completes
       }
     } else {
       setErrorMsg("Email not valid");
+      setLoading(false); // Stop loading state in case of invalid email
     }
   };
 
@@ -162,7 +170,7 @@ const Onboarding = () => {
             }`}
             onClick={() => setselectedAction(1)}
           >
-            SignUp
+            Create new account
           </button>
           <button
             className={`${
@@ -170,14 +178,13 @@ const Onboarding = () => {
             }`}
             onClick={() => setselectedAction(2)}
           >
-            Login
+            Log in
           </button>
         </div>
         <div className="form_cont">
           {selectedAction === 1 ? (
-            <form onSubmit={ValidateSignup}>
+            <form className="form_tag_style" onSubmit={ValidateSignup}>
               <div>
-                {/* <label>Username</label> */}
                 <input
                   type="text"
                   name="username"
@@ -190,7 +197,6 @@ const Onboarding = () => {
                 />
               </div>
               <div>
-                {/* <label>Full Name</label> */}
                 <input
                   type="text"
                   name="fullName"
@@ -204,7 +210,6 @@ const Onboarding = () => {
               </div>
 
               <div>
-                {/* <label>Email</label> */}
                 <input
                   type="email"
                   name="email"
@@ -217,8 +222,7 @@ const Onboarding = () => {
                 />
               </div>
 
-              <div>
-                {/* <label>Password</label> */}
+              <div className="password_cont">
                 <input
                   type={showPassword ? "text" : "password"}
                   name="password"
@@ -227,7 +231,7 @@ const Onboarding = () => {
                   onChange={handleChange}
                   placeholder="Password"
                   autoComplete="off"
-                  className="input_box_style password_cont"
+                  className="input_box_style "
                 />
 
                 <img
@@ -237,8 +241,7 @@ const Onboarding = () => {
                   alt="Toggle visibility"
                 />
               </div>
-              <div>
-                {/* <label>Password</label> */}
+              <div className="confirm_pwd">
                 <input
                   type={showConfirmPassword ? "text" : "password"}
                   name="confirmPassword"
@@ -247,11 +250,11 @@ const Onboarding = () => {
                   onChange={handleChange}
                   placeholder="Confirm password"
                   autoComplete="off"
-                  className="input_box_style password_cont"
+                  className="input_box_style "
                 />
 
                 <img
-                  className="password_toggle_icon"
+                  className="cnf_password_toggle_icon"
                   onClick={toggleConfirmPasswordVisibility}
                   src={showConfirmPassword ? eyeOpen : eyeClose}
                   alt="Toggle visibility"
@@ -259,14 +262,21 @@ const Onboarding = () => {
               </div>
 
               <div className="msg_cont">{errorMsg}</div>
-              <button type="submit" className="submit_btn">
-                Sign Up
+              <button
+                type="submit"
+                className={`submit_btn ${loading && "submit_btn_disable"}`}
+                disabled={loading}
+              >
+                {loading ? (
+                  <img src={loaderBtn} alt="loading" className="loader_style" />
+                ) : (
+                  <>Create account</>
+                )}
               </button>
             </form>
           ) : (
-            <form onSubmit={handleLogin}>
+            <form className="form_tag_style" onSubmit={handleLogin}>
               <div>
-                {/* <label>Email</label> */}
                 <input
                   type="email"
                   name="email"
@@ -279,7 +289,6 @@ const Onboarding = () => {
               </div>
 
               <div>
-                {/* <label>Password</label> */}
                 <input
                   type="password"
                   name="password"
@@ -290,9 +299,25 @@ const Onboarding = () => {
                   className="input_box_style"
                 />
               </div>
+              <div className="error_cont">
+                {errorMsg && (
+                  <div className="error_style">
+                    <img className="error_icon" alt="error" src={errorIcon} />
+                    {errorMsg}
+                  </div>
+                )}
+              </div>
 
-              <button type="submit" className="submit_btn">
-                Login
+              <button
+                type="submit"
+                className={`submit_btn ${loading && "submit_btn_disable"}`}
+                disabled={loading}
+              >
+                {loading ? (
+                  <img src={loaderBtn} alt="loading" className="loader_style" />
+                ) : (
+                  <>Log in</>
+                )}
               </button>
             </form>
           )}
