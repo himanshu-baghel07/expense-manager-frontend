@@ -70,7 +70,6 @@ const Onboarding = () => {
         });
         setselectedAction(2);
       }
-      setErrorMsg("Success");
     } catch (error) {
       console.log("Error", error);
       setErrorMsg(error.response?.data?.message || "An error occurred");
@@ -93,11 +92,9 @@ const Onboarding = () => {
       });
       if (response.status === 200) {
         console.log(response.data);
-
         sessionStorage.setItem("access_token", response.data.accessToken);
         navigateTo("/homescreen");
       }
-      setErrorMsg("Success");
     } catch (error) {
       console.log("Error", error);
       setErrorMsg(error.response?.data?.message || "An error occurred");
@@ -108,8 +105,7 @@ const Onboarding = () => {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    setLoading(true); // Start loading state
-
+    setLoading(true);
     if (emailValidation(formData.email)) {
       let encryptedRequestBody;
       const __reqBody = {
@@ -126,18 +122,17 @@ const Onboarding = () => {
         if (response.status === 200) {
           console.log("Id:", response.data.data.user._id);
           const id = response.data.data.user._id;
-          authenticate(id); // Call authenticate function
+          authenticate(id);
         }
-        setErrorMsg("Success");
       } catch (error) {
         console.log("Error", error);
         setErrorMsg(error.response?.data?.message || "An error occurred");
       } finally {
-        setLoading(false); // Stop loading state after the operation completes
+        setLoading(false);
       }
     } else {
       setErrorMsg("Email not valid");
-      setLoading(false); // Stop loading state in case of invalid email
+      setLoading(false);
     }
   };
 
@@ -168,7 +163,16 @@ const Onboarding = () => {
             className={`${
               selectedAction === 1 ? "select_btn" : "unselect_btn"
             }`}
-            onClick={() => setselectedAction(1)}
+            onClick={() => {
+              setErrorMsg("");
+              setFormData({
+                username: "",
+                fullName: "",
+                email: "",
+                password: "",
+              });
+              setselectedAction(1);
+            }}
           >
             Create new account
           </button>
@@ -176,7 +180,16 @@ const Onboarding = () => {
             className={`${
               selectedAction === 2 ? "select_btn" : "unselect_btn"
             }`}
-            onClick={() => setselectedAction(2)}
+            onClick={() => {
+              setErrorMsg("");
+              setFormData({
+                username: "",
+                fullName: "",
+                email: "",
+                password: "",
+              });
+              setselectedAction(2);
+            }}
           >
             Log in
           </button>
@@ -260,8 +273,14 @@ const Onboarding = () => {
                   alt="Toggle visibility"
                 />
               </div>
-
-              <div className="msg_cont">{errorMsg}</div>
+              <div className="error_cont">
+                {errorMsg && (
+                  <div className="error_style">
+                    <img className="error_icon" alt="error" src={errorIcon} />
+                    {errorMsg}
+                  </div>
+                )}
+              </div>
               <button
                 type="submit"
                 className={`submit_btn ${loading && "submit_btn_disable"}`}

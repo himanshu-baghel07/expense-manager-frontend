@@ -1,7 +1,26 @@
 .homescreen {
   background-color: #181c14;
   color: #ecdfcc;
+  height: 100vh;
 }
 .homescreen_main {
   height: 90vh;
+}
+.homescreen_cont {
+  width: 100%;
+  height: 90%;
+  display: flex;
+  flex-direction: row;
+}
+.common_sec {
+  width: 50%;
+  height: 45%;
+  display: flex;
+  flex-direction: column;
+}
+
+.expense_table {
+  width: 90%;
+  height: 100%;
+  background-color: #434e3870;
 }
