@@ -30,7 +30,7 @@ const Onboarding = () => {
 
   const navigateTo = useNavigate();
 
-  const handleChange = (e) => {
+  const handleFormSignup = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
@@ -203,7 +203,7 @@ const Onboarding = () => {
                   name="username"
                   required
                   value={formData.username.replace(/[^a-z0-9]/g, "")}
-                  onChange={handleChange}
+                  onChange={handleFormSignup}
                   placeholder="Username"
                   className="input_box_style"
                   autoComplete="off"
@@ -215,7 +215,7 @@ const Onboarding = () => {
                   name="fullName"
                   required
                   value={formData.fullName}
-                  onChange={handleChange}
+                  onChange={handleFormSignup}
                   placeholder="Full Name"
                   className="input_box_style"
                   autoComplete="off"
@@ -228,7 +228,7 @@ const Onboarding = () => {
                   name="email"
                   required
                   value={formData.email.replace(/[^a-zA-Z0-9@._-]/g, "")}
-                  onChange={handleChange}
+                  onChange={handleFormSignup}
                   placeholder="Email"
                   className="input_box_style"
                   autoComplete="off"
@@ -241,7 +241,7 @@ const Onboarding = () => {
                   name="password"
                   required
                   value={formData.password}
-                  onChange={handleChange}
+                  onChange={handleFormSignup}
                   placeholder="Password"
                   autoComplete="off"
                   className="input_box_style "
@@ -260,7 +260,7 @@ const Onboarding = () => {
                   name="confirmPassword"
                   required
                   value={formData.confirmPassword}
-                  onChange={handleChange}
+                  onChange={handleFormSignup}
                   placeholder="Confirm password"
                   autoComplete="off"
                   className="input_box_style "
@@ -301,7 +301,7 @@ const Onboarding = () => {
                   name="email"
                   required
                   value={formData.email}
-                  onChange={handleChange}
+                  onChange={handleFormSignup}
                   placeholder="Email or username"
                   className="input_box_style"
                 />
@@ -313,7 +313,7 @@ const Onboarding = () => {
                   name="password"
                   required
                   value={formData.password}
-                  onChange={handleChange}
+                  onChange={handleFormSignup}
                   placeholder="Password"
                   className="input_box_style"
                 />

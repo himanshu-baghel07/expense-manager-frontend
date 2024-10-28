@@ -3,11 +3,20 @@ import NavigationBar from "../Navbar/Navbar";
 import "./Homescreen.css";
 import axios from "axios";
 import URI from "../../common";
+import { Button, Modal } from "react-bootstrap";
 
 const Homescreen = () => {
   // const { username } = useSelector((state) => state.user_detail);
   const [loading, setLoading] = useState(false);
   const [expenseData, setExpenseData] = useState([]);
+  const [createExpeMod, setCreateExpeMod] = useState(false);
+  const [formData, setFormData] = useState({
+    title: "",
+    amount: 0,
+    description: "",
+    category: "",
+    date: null,
+  });
 
   const accessToken = sessionStorage.getItem("access_token");
   const headers = {
@@ -30,6 +39,17 @@ const Homescreen = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  console.log("Form data>>", formData);
+
+  const handleFormCreateExpense = (e) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+  };
+
+  const handleCreateExpense = async () => {
+    // form validation
   };
 
   useEffect(() => {
@@ -74,8 +94,84 @@ const Homescreen = () => {
 
             <div>Bottom</div>
           </div>
-          <div className="common_sec">2</div>
+          <div className="common_sec">
+            <button onClick={() => setCreateExpeMod(true)}>
+              Create expense
+            </button>
+          </div>
         </div>
+        <Modal
+          show={createExpeMod}
+          size="md"
+          aria-labelledby="contained-modal-title-vcenter"
+          centered
+        >
+          <Modal.Body className="modal_body">
+            <h4>Create new expense</h4>
+            <div className="create_expense_form">
+              <form className="form_tag_style" onSubmit={handleCreateExpense}>
+                <div>
+                  <input
+                    type="text"
+                    name="title"
+                    required
+                    value={formData.title}
+                    onChange={handleFormCreateExpense}
+                    placeholder="Title"
+                    className="input_box_style"
+                  />
+                </div>
+
+                <div>
+                  <input
+                    type="text"
+                    name="amount"
+                    required
+                    value={formData.amount}
+                    onChange={handleFormCreateExpense}
+                    placeholder="Amount"
+                    className="input_box_style"
+                    pattern="^\d+(\.\d{1,2})?$"
+                    title="Please enter a valid amount (e.g., 100 or 100.50)"
+                  />
+                </div>
+                <div>
+                  <input
+                    type="text"
+                    name="description"
+                    required
+                    value={formData.description}
+                    onChange={handleFormCreateExpense}
+                    placeholder="Description"
+                    className="input_box_style"
+                  />
+                </div>
+                <div></div>
+                <div className="error_cont">
+                  {/* {errorMsg && (
+                  <div className="error_style">
+                    <img className="error_icon" alt="error" src={errorIcon} />
+                    {errorMsg}
+                  </div>
+                )} */}
+                </div>
+
+                <button
+                  type="submit"
+                  // className={`submit_btn ${loading && "submit_btn_disable"}`}
+                  // disabled={loading}
+                >
+                  {/* {loading ? (
+                  <img src={loaderBtn} alt="loading" className="loader_style" />
+                ) : (
+                  <>Log in</>
+                )} */}
+                  Create expense
+                </button>
+              </form>
+            </div>
+          </Modal.Body>
+        </Modal>
       </div>
     </div>
   );
