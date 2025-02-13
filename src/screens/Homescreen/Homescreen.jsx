@@ -4,6 +4,7 @@ import "./Homescreen.css";
 import axios from "axios";
 import URI from "../../common";
 import { Button, Modal } from "react-bootstrap";
+import ExpenseChart from "./ExpenseChart";
 
 const Homescreen = () => {
   // const { username } = useSelector((state) => state.user_detail);
@@ -17,6 +18,7 @@ const Homescreen = () => {
     category: "",
     date: null,
   });
+  const [chartData, setChartData] = useState([]);
 
   const accessToken = sessionStorage.getItem("access_token");
   const headers = {
@@ -25,7 +27,7 @@ const Homescreen = () => {
       : "",
   };
 
-  const getexpenses = async () => {
+  const fetchExpenses = async () => {
     setLoading(true);
     try {
       const response = await axios.get(URI.getExpenses, {
@@ -35,7 +37,23 @@ const Homescreen = () => {
       setExpenseData(response.data.data);
     } catch (error) {
       console.error("Err>", error);
-      setExpenseData;
+      setExpenseData([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchChartData = async () => {
+    setLoading(true);
+    try {
+      const response = await axios.get(URI.getChartData, {
+        headers,
+      });
+      console.log("Reponse chart", response.data.data);
+      setChartData(response.data.data);
+    } catch (error) {
+      console.error("Err>", error);
+      setExpenseData([]);
     } finally {
       setLoading(false);
     }
@@ -53,17 +71,17 @@ const Homescreen = () => {
   };
 
   useEffect(() => {
-    getexpenses();
+    fetchExpenses();
+    fetchChartData();
   }, []);
 
   return (
     <div className="homescreen">
       <NavigationBar />
       <div className="homescreen_main">
-        <h2>Homescreen</h2>
         <div className="homescreen_cont">
           <div className="common_sec">
-            <div className="expense_table">
+            {/* <div className="expense_table">
               {expenseData.length !== 0 ? (
                 <table>
                   <thead>
@@ -90,7 +108,9 @@ const Homescreen = () => {
               ) : (
                 <p>No expenses found</p>
               )}
-            </div>
+            </div> */}
+
+            <ExpenseChart chartData={chartData} />
 
             <div>Bottom</div>
           </div>
@@ -108,6 +128,13 @@ const Homescreen = () => {
         >
           <Modal.Body className="modal_body">
             <h4>Create new expense</h4>
+            <div
+              onClick={() => {
+                setCreateExpeMod(false);
+              }}
+            >
+              X
+            </div>
             <div className="create_expense_form">
               <form className="form_tag_style" onSubmit={handleCreateExpense}>
                 <div>

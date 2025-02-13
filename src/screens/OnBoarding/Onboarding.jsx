@@ -196,7 +196,11 @@ const Onboarding = () => {
         </div>
         <div className="form_cont">
           {selectedAction === 1 ? (
-            <form className="form_tag_style" onSubmit={ValidateSignup}>
+            <form
+              autoComplete="off"
+              className="form_tag_style"
+              onSubmit={ValidateSignup}
+            >
               <div>
                 <input
                   type="text"
@@ -206,7 +210,7 @@ const Onboarding = () => {
                   onChange={handleFormSignup}
                   placeholder="Username"
                   className="input_box_style"
-                  autoComplete="off"
+                  autoComplete="password"
                 />
               </div>
               <div>
